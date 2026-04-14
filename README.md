@@ -21,3 +21,39 @@ wget "https://raw.githubusercontent.com/alessandrolaferlita/tRFuniverse-STAR-pro
  for sam in ./sam/*.sam; do     base=$(basename "$sam" .sam);      samtools view -@ 15 -h -F 4 "$sam"     > ./sam_filt/${base}_filt.sam; done
 
 
+
+#### bam
+mkdir -p bam
+
+for sam in ./sam_filt/*_filt.sam; do
+    base=$(basename "$sam" _filt.sam)
+
+    samtools view -@ 15 -bS "$sam" \
+    > ./bam/${base}.bam
+done
+
+
+########
+
+# Create the output folder for sorted BAMs
+mkdir -p bam_sorted
+# Go back to the parent directory (where you have bam/, filtered/, logs/, etc.)
+cd ..
+
+# Create the output folder for sorted BAMs (if not already done)
+mkdir -p bam_sorted
+
+# Loop over each BAM in ./bam/
+for bam in ./bam/*.bam; do
+    # Extract base name without path and .bam extension
+    base=$(basename "$bam" .bam)
+    echo "Processing $base ..."
+    
+    # Sort
+    samtools sort --threads 15 "$bam" -o "./bam_sorted/${base}_sorted.bam"
+    
+    # Index (index will be created as ./bam_sorted/${base}_sorted.bam.bai)
+    samtools index -@ 15 "./bam_sorted/${base}_sorted.bam"
+done
+
+
