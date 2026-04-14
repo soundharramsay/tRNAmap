@@ -57,3 +57,17 @@ for bam in ./bam/*.bam; do
 done
 
 
+
+-------------mkdir -p counts logs
+
+for bam in ./bam_sorted/*_sorted.bam; do
+    base=$(basename "$bam" _sorted.bam)
+
+    ./bedtools.static.binary multicov -q 30 \
+    -bams "$bam" \
+    -bed ./Human_hg38lift_tsRNA_and_5leader_final_edited.bed \
+    > ./counts/${base}.txt \
+    2> ./logs/${base}.log
+done
+
+
