@@ -71,3 +71,24 @@ for bam in ./bam_sorted/*_sorted.bam; do
 done
 
 
+
+
+
+mkdir -p 9_mintmap 9_logs
+
+cd MINTmap-release-v1.0
+
+for fq in ../filtered/*_R1_*_unmapped.fq; do
+    base=$(basename "$fq" _concat.trim_unmapped.fq)
+
+    echo "Processing: $base"
+
+    perl MINTmap.pl \
+    -f "$fq" \
+    -p ../9_mintmap/${base}_R1 \
+    > ../9_logs/${base}.log 2>&1
+done
+
+cd ..
+
+
